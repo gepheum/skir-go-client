@@ -17,4 +17,3 @@ See https://github.com/gepheum/skir-go-gen
 ## License
 
 MIT
-# skir-go-client
