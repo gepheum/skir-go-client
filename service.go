@@ -130,7 +130,7 @@ type MethodErrorInfo[RequestMeta any] struct {
 
 // ServiceBuilder configures a [Service] and registers its method
 // implementations. Call [ServiceBuilder.Build] to create a Service once all
-// methods have been registered with [RegisterMethod].
+// methods have been registered with [AddMethod].
 //
 // # Quick-start
 //
@@ -155,8 +155,8 @@ type MethodErrorInfo[RequestMeta any] struct {
 // 2. Register all methods and build the service:
 //
 //	b := skir_client.NewServiceBuilder[struct{}]()
-//	skir_client.RegisterMethod(b, svc.GetUser(), getUser)
-//	skir_client.RegisterMethod(b, svc.AddUser(), addUser)
+//	skir_client.AddMethod(b, svc.GetUser(), getUser)
+//	skir_client.AddMethod(b, svc.AddUser(), addUser)
 //	service := b.Build()
 //
 // 3. Wire the service into an HTTP handler:
@@ -242,14 +242,14 @@ type serviceMethodEntry[RequestMeta any] struct {
 	responseTypeDescriptor string // TypeDescriptor.AsJson()
 }
 
-// RegisterMethod registers a method implementation on the builder.
+// AddMethod registers a method implementation on the builder.
 //
-// Because Go generics do not allow generic methods, RegisterMethod is a
+// Because Go generics do not allow generic methods, AddMethod is a
 // package-level function rather than a method on ServiceBuilder.
 //
 // Returns an error if a method with the same number has already been
 // registered.
-func RegisterMethod[Req, Resp, RequestMeta any](
+func AddMethod[Req, Resp, RequestMeta any](
 	b *ServiceBuilder[RequestMeta],
 	method Method[Req, Resp],
 	impl func(ctx context.Context, req Req, meta RequestMeta) (Resp, error),

@@ -72,20 +72,20 @@ func newTestService(opts ...ServiceBuilder[struct{}]) *Service[struct{}] {
 			b.StudioAppJsUrl = opts[0].StudioAppJsUrl
 		}
 	}
-	RegisterMethod(b, echoMethod, func(_ context.Context, req string, _ struct{}) (string, error) {
+	AddMethod(b, echoMethod, func(_ context.Context, req string, _ struct{}) (string, error) {
 		return req, nil
 	})
-	RegisterMethod(b, reverseMethod, func(_ context.Context, req string, _ struct{}) (string, error) {
+	AddMethod(b, reverseMethod, func(_ context.Context, req string, _ struct{}) (string, error) {
 		runes := []rune(req)
 		for i, j := 0, len(runes)-1; i < j; i, j = i+1, j-1 {
 			runes[i], runes[j] = runes[j], runes[i]
 		}
 		return string(runes), nil
 	})
-	RegisterMethod(b, failMethod, func(_ context.Context, req string, _ struct{}) (string, error) {
+	AddMethod(b, failMethod, func(_ context.Context, req string, _ struct{}) (string, error) {
 		return "", &ServiceError{StatusCode: HttpErrorCode_NotFound, Message: req}
 	})
-	RegisterMethod(b, failUnknownMethod, func(_ context.Context, req string, _ struct{}) (string, error) {
+	AddMethod(b, failUnknownMethod, func(_ context.Context, req string, _ struct{}) (string, error) {
 		return "", errors.New("something went wrong internally")
 	})
 	return b.Build()
@@ -483,19 +483,19 @@ func TestService_HandleRequest_colonFormat_bodyContainsColons(t *testing.T) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Service – RegisterMethod duplicate number/name
+// Service – AddMethod duplicate number/name
 // ─────────────────────────────────────────────────────────────────────────────
 
-func TestService_RegisterMethod_duplicateNumberReturnsError(t *testing.T) {
+func TestService_AddMethod_duplicateNumberReturnsError(t *testing.T) {
 	b := NewServiceBuilder[struct{}]()
-	if err := RegisterMethod(b, echoMethod, func(_ context.Context, req string, _ struct{}) (string, error) {
+	if err := AddMethod(b, echoMethod, func(_ context.Context, req string, _ struct{}) (string, error) {
 		return req, nil
 	}); err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
 	// Register a different method name but same number.
 	dupMethod := NewMethod("AnotherName", 1001, StringSerializer(), StringSerializer(), "")
-	err := RegisterMethod(b, dupMethod, func(_ context.Context, req string, _ struct{}) (string, error) {
+	err := AddMethod(b, dupMethod, func(_ context.Context, req string, _ struct{}) (string, error) {
 		return req, nil
 	})
 	if err == nil {
@@ -503,16 +503,16 @@ func TestService_RegisterMethod_duplicateNumberReturnsError(t *testing.T) {
 	}
 }
 
-func TestService_RegisterMethod_duplicateNameIsAllowed(t *testing.T) {
+func TestService_AddMethod_duplicateNameIsAllowed(t *testing.T) {
 	b := NewServiceBuilder[struct{}]()
-	if err := RegisterMethod(b, echoMethod, func(_ context.Context, req string, _ struct{}) (string, error) {
+	if err := AddMethod(b, echoMethod, func(_ context.Context, req string, _ struct{}) (string, error) {
 		return req, nil
 	}); err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
 	// Same name, different number — should succeed.
 	dupMethod := NewMethod("Echo", 9999, StringSerializer(), StringSerializer(), "")
-	if err := RegisterMethod(b, dupMethod, func(_ context.Context, req string, _ struct{}) (string, error) {
+	if err := AddMethod(b, dupMethod, func(_ context.Context, req string, _ struct{}) (string, error) {
 		return "new impl", nil
 	}); err != nil {
 		t.Errorf("unexpected error for duplicate method name: %v", err)
@@ -528,7 +528,7 @@ func TestService_RequestMeta_passedToImpl(t *testing.T) {
 	b := NewServiceBuilder[Meta]()
 	var capturedMeta Meta
 	m := NewMethod("WhoAmI", 5001, StringSerializer(), StringSerializer(), "")
-	RegisterMethod(b, m, func(_ context.Context, _ string, meta Meta) (string, error) {
+	AddMethod(b, m, func(_ context.Context, _ string, meta Meta) (string, error) {
 		capturedMeta = meta
 		return meta.UserID, nil
 	})
