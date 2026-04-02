@@ -326,7 +326,7 @@ func (b *ServiceBuilder[RequestMeta]) Build() *Service[RequestMeta] {
 // If you are using the standard Go HTTP library, prefer
 // [Service.HandleRequestFromStandardLib], which extracts the body from an
 // *http.Request automatically. HandleRequest is a lower-level alternative for
-// integrating a Skir service into a different web framework.
+// integrating a SkirRPC service into a different web framework.
 func (s *Service[RequestMeta]) HandleRequest(ctx context.Context, body string, meta RequestMeta) RawResponse {
 	switch body {
 	case "", "studio":
@@ -406,7 +406,7 @@ const studioHtmlTemplate = `<!DOCTYPE html>
   <head>
     <meta charset="utf-8" />
     <title>RPC Studio</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%%22http://www.w3.org/2000/svg%%22 viewBox=%%220 0 100 100%%22><text y=%%22.9em%%22 font-size=%%2290%%22>⚡</text></svg>">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%%22http://www.w3.org/2000/svg%%22 viewBox=%%220 0 100 100%%22><text y=%%22.9em%%22 font-size=%%2290%%22>🐙</text></svg>">
     <script src="%s"></script>
   </head>
   <body style="margin: 0; padding: 0;">
