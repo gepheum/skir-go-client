@@ -115,3 +115,25 @@ func TestEnumNameCase_UpperAndLowerYieldSameResult(t *testing.T) {
 		t.Errorf("Expected colorKindRed, got %v", fromUpper.kind)
 	}
 }
+
+// TestEnumNameCase_ParseUnknownLowerCase verifies that lower-case "unknown"
+// is treated like upper-case "UNKNOWN".
+func TestEnumNameCase_ParseUnknownLowerCase(t *testing.T) {
+	a := newTestColorEnumAdapter()
+	ser := a.Serializer()
+
+	fromUpper, err := ser.FromJson(`"UNKNOWN"`)
+	if err != nil {
+		t.Fatalf("FromJson(UNKNOWN): %v", err)
+	}
+	fromLower, err := ser.FromJson(`"unknown"`)
+	if err != nil {
+		t.Fatalf("FromJson(unknown): %v", err)
+	}
+	if fromUpper.kind != fromLower.kind {
+		t.Errorf("Parsing UNKNOWN and unknown yield different kinds: %v vs %v", fromUpper.kind, fromLower.kind)
+	}
+	if fromLower.kind != colorKindUnknown {
+		t.Errorf("Expected colorKindUnknown, got %v", fromLower.kind)
+	}
+}

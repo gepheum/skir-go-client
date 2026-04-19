@@ -379,6 +379,7 @@ func (a *Internal__EnumAdapter[T]) Finalize() {
 	// Register the unknown entry in all lookup structures.
 	a.numberToEntry[0] = a.unknownEntry
 	a.nameToVariantEntry["UNKNOWN"] = a.unknownEntry
+	a.nameToVariantEntry["unknown"] = a.unknownEntry
 	a.kindOrdinalToEntry[0] = a.unknownEntry
 	// Populate Variants on the descriptor pre-allocated in NewEnumAdapter
 	// (UNKNOWN is excluded from the descriptor variants).
