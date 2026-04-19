@@ -305,7 +305,19 @@ func (a *Internal__EnumAdapter[T]) AddConstantVariant(
 		inst:    instance,
 	}
 	a.numberToEntry[number] = e
-	a.registerName(name, e)
+	a.nameToVariantEntry[name] = e
+	{
+		upper := strings.ToUpper(name)
+		if upper != name {
+			a.nameToVariantEntry[upper] = e
+		}
+	}
+	{
+		lower := strings.ToLower(name)
+		if lower != name {
+			a.nameToVariantEntry[lower] = e
+		}
+	}
 	a.kindOrdinalToEntry[kindOrdinal] = e
 	a.descVariants = append(a.descVariants, &EnumConstantVariant{name: name, number: number, doc: doc})
 }
@@ -337,7 +349,7 @@ func Internal__AddWrapperVariant[T, V any](
 		getValue: getValue,
 	}
 	a.numberToEntry[number] = e
-	a.registerName(name, e)
+	a.nameToVariantEntry[name] = e
 	a.kindOrdinalToEntry[kindOrdinal] = e
 	a.descVariants = append(a.descVariants, &EnumWrapperVariant{
 		name:        name,
@@ -371,25 +383,6 @@ func (a *Internal__EnumAdapter[T]) Finalize() {
 	// Populate Variants on the descriptor pre-allocated in NewEnumAdapter
 	// (UNKNOWN is excluded from the descriptor variants).
 	a.desc.variants = a.descVariants
-}
-
-// registerName registers a variant entry under name and also registers
-// case aliases (upper-case and lower-case) so that readable JSON produced
-// by either old (UPPER_CASE) or new (lower_case) serializers is accepted.
-func (a *Internal__EnumAdapter[T]) registerName(name string, e enumVariantEntry[T]) {
-	a.nameToVariantEntry[name] = e
-	{
-		upper := strings.ToUpper(name)
-		if upper != name {
-			a.nameToVariantEntry[upper] = e
-		}
-	}
-	{
-		lower := strings.ToLower(name)
-		if lower != name {
-			a.nameToVariantEntry[lower] = e
-		}
-	}
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
