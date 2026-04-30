@@ -66,7 +66,7 @@ func (e *enumUnknownEntry[T]) variantEntryIsWrapper() bool  { return false }
 
 func (e *enumUnknownEntry[T]) variantEntryToJson(input T, eolIndent *string, out *strings.Builder) {
 	if eolIndent != nil {
-		out.WriteString(`"UNKNOWN"`)
+		out.WriteString(`"unknown"`)
 		return
 	}
 	unrecognized := e.getUnrecognized(input)
